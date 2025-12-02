@@ -33,9 +33,11 @@ This crawler automatically extracts:
 
 ## 📁 Project Structure
 
-📦 website-seo-crawler
-├── crawler.py # Main crawler script
-├── urls.txt # Input URL list (one per line)
-├── crawl_report.csv # Output SEO report (auto-generated)
-└── README.md # Documentation
+website-seo-crawler/
+│
+├── crawler.py          # Main crawler script
+├── urls.txt            # Input URL list (one per line)
+├── crawl_report.csv    # Output SEO report (auto-generated)
+└── README.md
+
 
