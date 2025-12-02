@@ -23,6 +23,5 @@ http://localhost:3000/about
 
 
 http://localhost:3000/404
-http://localhost:3000/_not-found
 http://localhost:3000/about
 

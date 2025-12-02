@@ -80,18 +80,15 @@ def extract_visible_text(html: str) -> str:
 def analyze_html(html: str) -> dict:
     soup = BeautifulSoup(html, "html.parser")
 
-    # Title
     title_text = ""
     if soup.title and soup.title.string:
         title_text = clean_text(soup.title.string)
 
-    # Meta description
     meta_desc = ""
     meta_desc_tag = soup.find("meta", attrs={"name": "description"})
     if meta_desc_tag and meta_desc_tag.get("content"):
         meta_desc = clean_text(meta_desc_tag.get("content"))
 
-    # Word count
     visible_text = extract_visible_text(html)
     word_count = len(visible_text.split()) if visible_text else 0
 
@@ -126,11 +123,10 @@ def crawl_urls(urls: list[str]) -> pd.DataFrame:
         rows.append(row)
 
     df = pd.DataFrame(rows)
-    return df[COLUMNS]  # enforce ONLY 6 columns + correct order
+    return df[COLUMNS]
 
 
 def generate_filename() -> str:
-    # Windows-safe: ":" not allowed in filenames, so use "-"
     ts = datetime.now().strftime("%d-%m-%Y %I-%M %p")
     return f"crawl-report-{ts}.xlsx"
 
@@ -141,11 +137,11 @@ def main():
     )
     parser.add_argument(
         "-i", "--input", type=str, default="urls.txt",
-        help="Path to input file containing URLs (one per line). Default: urls.txt"
+        help="Path to input file containing URLs (one per line). Default: urls.txt",
     )
     parser.add_argument(
         "-o", "--out-dir", type=str, default=".",
-        help="Output directory. Default: current folder"
+        help="Base output directory. A 'reports' folder will be created inside this. Default: current folder",
     )
     args = parser.parse_args()
 
@@ -156,17 +152,17 @@ def main():
 
     df = crawl_urls(urls)
 
-    out_dir = Path(args.out_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
+    # Always write into <out-dir>/reports/
+    base_out_dir = Path(args.out_dir)
+    reports_dir = base_out_dir / "reports"
+    reports_dir.mkdir(parents=True, exist_ok=True)
 
-    out_file = out_dir / generate_filename()
+    out_file = reports_dir / generate_filename()
 
-    # Save as XLSX (no comma separator drama)
     # Requires: pip install openpyxl
     df.to_excel(out_file, index=False, engine="openpyxl")
 
     print(f"\n[INFO] Saved Excel report to: {out_file.resolve()}")
-
     print("\n=== Crawl Report ===")
     print(tabulate(df, headers="keys", tablefmt="fancy_grid", showindex=False))
 
