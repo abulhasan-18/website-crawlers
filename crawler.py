@@ -163,8 +163,6 @@ def main():
     df.to_excel(out_file, index=False, engine="openpyxl")
 
     print(f"\n[INFO] Saved Excel report to: {out_file.resolve()}")
-    print("\n=== Crawl Report ===")
-    print(tabulate(df, headers="keys", tablefmt="fancy_grid", showindex=False))
 
 
 if __name__ == "__main__":
