@@ -1,6 +1,5 @@
 import argparse
 import re
-import csv
 from pathlib import Path
 from datetime import datetime
 
@@ -36,16 +35,14 @@ def load_urls(file_path: Path) -> list[str]:
 
 def clean_text(value: str) -> str:
     """
-    Make CSV/Sheets-safe:
+    Make Excel-safe:
     - remove line breaks
-    - remove double quotes (common reason Sheets gets confused)
     - normalize whitespace
     """
     if not value:
         return ""
 
     value = value.replace("\n", " ").replace("\r", " ")
-    value = value.replace('"', "")   # important
     value = re.sub(r"\s+", " ", value)
     return value.strip()
 
@@ -134,14 +131,13 @@ def crawl_urls(urls: list[str]) -> pd.DataFrame:
 
 def generate_filename() -> str:
     # Windows-safe: ":" not allowed in filenames, so use "-"
-    # Example: crawl-report-02-12-2025 10-15 AM.csv
     ts = datetime.now().strftime("%d-%m-%Y %I-%M %p")
-    return f"crawl-report-{ts}.csv"
+    return f"crawl-report-{ts}.xlsx"
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Website crawler → outputs 6 columns (Sheets-safe) CSV"
+        description="Website crawler → outputs 6 columns to Excel (.xlsx)"
     )
     parser.add_argument(
         "-i", "--input", type=str, default="urls.txt",
@@ -165,15 +161,11 @@ def main():
 
     out_file = out_dir / generate_filename()
 
-    # CSV written in a way Google Sheets won't break columns
-    df.to_csv(
-        out_file,
-        index=False,
-        encoding="utf-8-sig",
-        quoting=csv.QUOTE_ALL
-    )
+    # Save as XLSX (no comma separator drama)
+    # Requires: pip install openpyxl
+    df.to_excel(out_file, index=False, engine="openpyxl")
 
-    print(f"\n[INFO] Saved CSV report to: {out_file.resolve()}")
+    print(f"\n[INFO] Saved Excel report to: {out_file.resolve()}")
 
     print("\n=== Crawl Report ===")
     print(tabulate(df, headers="keys", tablefmt="fancy_grid", showindex=False))
