@@ -1,5 +1,7 @@
-
 http://localhost:3000/
+http://localhost:3000/2025-12-05
+http://localhost:3000/2025-12-06
+http://localhost:3000/2025-12-07
 http://localhost:3000/tamil-monthly-calendar
 
 http://localhost:3000/tamil-events/2025
@@ -24,4 +26,8 @@ http://localhost:3000/about
 
 http://localhost:3000/404
 http://localhost:3000/about
+
+
+
+
 
